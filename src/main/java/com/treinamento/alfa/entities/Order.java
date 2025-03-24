@@ -3,6 +3,9 @@ package com.treinamento.alfa.entities;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table( name = "tb_order")
@@ -12,7 +15,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant momento;
+    private Instant moment;
     private OrderStatus status;
 
     @ManyToOne
@@ -22,13 +25,16 @@ public class Order {
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 
+    @OneToMany(mappedBy = "id.order")
+    private Set<OrderItem> items = new HashSet<>();
+
     public Order () {
 
     }
 
-    public Order(Long id, Instant momento, User client, OrderStatus status, Payment payment) {
+    public Order(Long id, Instant moment, User client, OrderStatus status, Payment payment) {
         this.id = id;
-        this.momento = momento;
+        this.moment = moment;
         this.client = client;
         this.status = status;
         this.payment = payment;
@@ -42,12 +48,12 @@ public class Order {
         this.id = id;
     }
 
-    public Instant getMomento() {
-        return momento;
+    public Instant getMoment() {
+        return moment;
     }
 
-    public void setMomento(Instant momento) {
-        this.momento = momento;
+    public void setMoment(Instant moment) {
+        this.moment = moment;
     }
 
     public OrderStatus getStatus() {
@@ -72,5 +78,13 @@ public class Order {
 
     public void setPayment(Payment payment) {
         this.payment = payment;
+    }
+
+    public Set<OrderItem> getItems() {
+        return items;
+    }
+
+    public List<Product> getProduct() {
+        return items.stream().map(x -> x.getProduct()).toList();
     }
 }
