@@ -23,7 +23,7 @@ public class ProductService {
     public ProductDTO findById(Long id){
         Optional<Product> result = repository.findById(id);
         Product product = result.get();
-        ProductDTO dto = new ProductDTO(product.getId(), product.getName(), product.getDescription(), product.getPrice() , product.getImgUrl());
+        ProductDTO dto = new ProductDTO(product);
         return dto;
     }
 
@@ -31,6 +31,19 @@ public class ProductService {
     public Page<ProductDTO> findAll(Pageable pageable) {
         Page<Product> result = repository.findAll(pageable);
         return result.map(x -> new ProductDTO(x));
+    }
+
+    @Transactional
+    public ProductDTO insert(ProductDTO dto) {
+         Product entity = new Product();
+         entity.setName(dto.getName());
+         entity.setDescription(dto.getDescription());
+         entity.setPrice(dto.getPrice());
+         entity.setImgUrl(dto.getImgUrl());
+
+         entity = repository.save(entity);
+
+         return new ProductDTO(entity);
     }
 
 }
